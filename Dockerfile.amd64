@@ -1,0 +1,14 @@
+FROM golang:latest
+
+WORKDIR /usr/src/app
+COPY . .
+
+WORKDIR /usr/src/app/client
+RUN go mod init github.com/pranjallk1995/0mq-golang-docker/client && go mod tidy
+
+EXPOSE 8080
+
+WORKDIR /usr/src/app/server
+RUN go mod init github.com/pranjallk1995/0mq-golang-docker/server && go mod tidy
+
+EXPOSE 5000
