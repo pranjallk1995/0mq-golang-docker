@@ -14,7 +14,7 @@ func main() {
 	s, _ := zctx.NewSocket(zmq.REQ)
 	s.Connect("tcp://localhost:8000")
 
-	// Do 10 requests, waiting each time for a response
+	// Do 5 requests, waiting each time for a response
 	for i := 0; i < 5; i++ {
 		fmt.Printf("Sending request %d...\n", i)
 		s.Send("Request from client", 0)
