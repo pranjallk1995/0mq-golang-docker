@@ -1,5 +1,7 @@
+## STAGE 1
+
 # Importing the golang debian stable image from docker hub
-FROM golang:1.19.0-bullseye
+FROM golang:1.19.0-bullseye AS builder
 
 # Installing the necessay debian libraries for 0MQ in the docker container
 RUN apt-get update -q && \
@@ -30,11 +32,27 @@ WORKDIR server
 RUN go mod init github.com/pranjallk1995/0mq-golang-docker/server
 RUN go mod tidy
 RUN go get github.com/pebbe/zmq4
-RUN go build -o /0MQ-golang-server
+RUN go build -o /app/0MQ-golang-server
 
 # Creating go.mod files and building the go executable for the client
 WORKDIR ../client
 RUN go mod init github.com/pranjallk1995/0mq-golang-docker/client
 RUN go mod tidy
 RUN go get github.com/pebbe/zmq4
-RUN go build -o /0MQ-golang-client
+RUN go build -o /app/0MQ-golang-client
+
+## STAGE 2
+
+# Creating a bare minimum small size image
+FROM debian:bullseye-slim
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libzmq5-dev
+
+ENV PORT 8000
+
+WORKDIR /app
+
+COPY --from=builder /app /app
+
+CMD [ "./0MQ-golang-server" ]

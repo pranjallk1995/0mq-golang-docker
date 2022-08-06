@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"fmt"
 	"log"
 	"time"
 
@@ -11,7 +13,9 @@ func main() {
 	zctx, _ := zmq.NewContext()
 
 	s, _ := zctx.NewSocket(zmq.REP)
-	s.Bind("tcp://*:8000")
+	socket := "tcp://*:" + os.Getenv("PORT")
+	s.Bind(socket)
+	fmt.Println("Server running on: " + socket)
 
 	for {
 		// Wait for next request from client
